@@ -1,12 +1,21 @@
 import Image from 'next/image'
-import { Button } from './ui/button'
-import { signIn, useSession } from 'next-auth/react'
-import { ChevronRight } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import Login from './login'
 import Checkout from './checkout'
+import { api } from '@/utils/api'
+import { Button } from './ui/button'
+import { ChevronRight } from 'lucide-react'
+import { useRouter } from 'next/router'
 
 const Main = () => {
   const { status } = useSession()
+  const router = useRouter()
+
+  const { data: user } = api.user.fetchUser.useQuery()
+
+  const paidUser = user?.isPaymentSucceeded && status === 'authenticated'
+  const freeUser = !user?.isPaymentSucceeded && status === 'authenticated'
+  const guestUser = status === 'unauthenticated'
 
   return (
     <section className="flex flex-col justify-center items-start text-center md:text-left p-4 border-x border-b h-screen border-slate-800">
@@ -54,7 +63,17 @@ const Main = () => {
         </div>
       </div>
       <section className="flex border p-2 w-4/5 mx-auto mt-6 hover:bg-sky-100 dark:hover:bg-gray-800 duration-200 rounded group self-center">
-        {status === 'authenticated' ? <Checkout /> : <Login />}
+        {paidUser && (
+          <Button
+            className="mx-auto group cursor-pointer"
+            onClick={() => void router.push('/dashboard')}
+          >
+            Dashboard
+            <ChevronRight className="ml-2 group-hover:translate-x-1 transition" />
+          </Button>
+        )}
+        {freeUser && <Checkout />}
+        {guestUser && <Login />}
       </section>
     </section>
   )
