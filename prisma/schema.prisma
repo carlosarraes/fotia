@@ -56,7 +56,7 @@ model User {
     uniqueKeyword      String?
     modelTrainingLimit Int       @default(0)
     trainerVersion     String?
-    credits            Int       @default(50)
+    credits            Int       @default(0)
     modelId            String?
     images             Image[]
 }
