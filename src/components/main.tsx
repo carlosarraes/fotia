@@ -3,6 +3,7 @@ import { Button } from './ui/button'
 import { signIn, useSession } from 'next-auth/react'
 import { ChevronRight } from 'lucide-react'
 import Login from './login'
+import Checkout from './checkout'
 
 const Main = () => {
   const { status } = useSession()
@@ -56,11 +57,7 @@ const Main = () => {
         variant="outline"
         className="w-4/5 mx-auto mt-6 hover:bg-sky-100 dark:hover:bg-gray-800 duration-200 rounded group self-center"
       >
-        {status === 'authenticated' ? (
-          <span className="self-center">Comprar serviços</span>
-        ) : (
-          <Login />
-        )}
+        {status === 'authenticated' ? <Checkout /> : <Login />}
         <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition self-center" />
       </Button>
     </section>
