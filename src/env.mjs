@@ -13,6 +13,10 @@ export const env = createEnv({
     ),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
+    STRIPE_SECRET: z.string(),
+    STRIPE_WEBHOOK_SECRET: z.string(),
+    STRIPE_PRODUCT_ID: z.string(),
+    BASE_URL: z.string().url(),
   },
 
   client: {
@@ -26,6 +30,10 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    STRIPE_SECRET: process.env.STRIPE_SECRET,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    STRIPE_PRODUCT_ID: process.env.STRIPE_PRODUCT_ID,
+    BASE_URL: process.env.BASE_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 })
