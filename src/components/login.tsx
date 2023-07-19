@@ -6,7 +6,7 @@ import { FaGoogle } from 'react-icons/fa'
 const Login = () => {
   return (
     <Dialog>
-      <DialogTrigger>Entrar</DialogTrigger>
+      <DialogTrigger className="text-center mx-auto">Entrar</DialogTrigger>
       <DialogContent className="bg-gray-50 dark:bg-slate-800">
         <DialogHeader>
           <DialogTitle>Faça login com sua conta:</DialogTitle>

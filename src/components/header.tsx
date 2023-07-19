@@ -14,7 +14,7 @@ const Header = () => {
       <div className="flex items-center justify-center gap-2 text-xl">
         <FaCameraRetro className="inline-block text-sky-600" />
         <div className="font-bold tracking-wider">
-          Fot<span className="text-sky-600">IA</span>
+          Fot<span className="text-sky-600">IA</span> <span className="text-xs">(alpha)</span>
         </div>
       </div>
       <div className="flex space-x-6">
