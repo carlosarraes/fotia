@@ -1,11 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { api } from '@/utils/api'
+import { Button } from './ui/button'
 import {
   Dialog,
   DialogContent,
@@ -14,9 +8,33 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog'
-import { Button } from './ui/button'
+import { CreditCard } from 'lucide-react'
+import { MdPix } from 'react-icons/md'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 
 const Checkout = () => {
+  const router = useRouter()
+
+  const checkout = api.stripe.checkout.useMutation({
+    onSuccess: (url) => {
+      if (url) void router.push(url)
+    },
+  })
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search)
+
+    if (query.has('success')) {
+      toast.success('Pagamento realizado com sucesso!')
+    }
+
+    if (query.has('canceled')) {
+      toast.error('Pagamento cancelado!')
+    }
+  }, [])
+
   return (
     <Dialog>
       <DialogTrigger className="text-center mx-auto">Comprar serviços</DialogTrigger>
@@ -26,28 +44,23 @@ const Checkout = () => {
         </DialogHeader>
         <section className="flex flex-col gap-4">
           <section className="flex justify-between gap-4">
-            <Card className="w-1/2 border-4">
-              <CardHeader>
-                <CardTitle>Cartão</CardTitle>
-                <CardDescription>Utilizamos o Stripe</CardDescription>
-              </CardHeader>
-              <CardContent>R$ 7,90</CardContent>
-            </Card>
-            <Card className="w-1/2">
-              <CardHeader>
-                <CardTitle>PIX</CardTitle>
-                <CardDescription>Em breve!</CardDescription>
-              </CardHeader>
-              <CardContent>R$ 7,90</CardContent>
-            </Card>
+            <Button
+              variant="outline"
+              className="flex h-28 flex-col w-1/2 space-y-4 rounded border-2 border-gray-300 hover:bg-gray-300 bg-gray-300 dark:border-slate-700 p-4 dark:bg-slate-700"
+              onClick={() => checkout.mutate()}
+            >
+              <CreditCard size={36} />
+              <span>Cartão de crédito</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="flex h-28 flex-col w-1/2 space-y-4 rounded border-2 border-gray-300 hover:bg-gray-300 bg-gray-300 dark:border-slate-700 p-4 dark:bg-slate-700"
+              disabled
+            >
+              <MdPix size={36} />
+              <span>PIX (em breve)</span>
+            </Button>
           </section>
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full hover:bg-gray-100 dark:hover:bg-slate-900"
-          >
-            Comprar
-          </Button>
         </section>
         <hr />
         <DialogFooter className="mx-auto">txt2image em breve!</DialogFooter>
