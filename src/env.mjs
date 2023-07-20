@@ -17,6 +17,9 @@ export const env = createEnv({
     STRIPE_WEBHOOK_SECRET: z.string(),
     STRIPE_PRODUCT_ID: z.string(),
     BASE_URL: z.string().url(),
+    AWS_ACCESS_KEY: z.string(),
+    AWS_SECRET_KEY: z.string(),
+    AWS_BUCKET_NAME: z.string(),
   },
 
   client: {
@@ -34,6 +37,9 @@ export const env = createEnv({
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     STRIPE_PRODUCT_ID: process.env.STRIPE_PRODUCT_ID,
     BASE_URL: process.env.BASE_URL,
+    AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
+    AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
+    AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 })
