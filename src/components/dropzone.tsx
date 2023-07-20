@@ -1,12 +1,13 @@
 import ImageBlobReducer from 'image-blob-reduce'
-import { X } from 'lucide-react'
 import { nanoid } from 'nanoid'
-import Image from 'next/image'
 import Pica from 'pica'
 import { useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import ShowImage from './show-image'
 import { Button } from './ui/button'
+import { api } from '@/utils/api'
+import { toast } from 'react-hot-toast'
+import axios from 'axios'
 
 const pica = Pica({ features: ['js', 'wasm', 'ww'] })
 const reducer = new ImageBlobReducer({
@@ -18,6 +19,48 @@ type fileWithPreview = File & { preview: string; id: string }
 const Dropzone = () => {
   const [files, setFiles] = useState<fileWithPreview[]>([])
   const [uploading, setUploading] = useState(false)
+
+  const ctx = api.useContext()
+  const uploadUrls = api.aws.uploadImgs.useMutation({
+    onError: (error) => {
+      console.log(error)
+      toast.error('Erro ao processar imagens')
+    },
+    onSuccess: async (data) => {
+      try {
+        setUploading(true)
+
+        const resizedImgs: Blob[] = []
+
+        for (const file of files) {
+          const resizedBlob = await reducer.toBlob(
+            new Blob([file], {
+              type: 'image/jpeg',
+            }),
+            {
+              max: 1000,
+            },
+          )
+          resizedImgs.push(resizedBlob)
+        }
+
+        const promises = data.map((url, index) => axios.put(url, resizedImgs[index]))
+
+        await Promise.all(promises)
+        void ctx.aws.getAllImgs.invalidate()
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(error.message)
+          toast.error('Erro ao processar imagens')
+          return
+        }
+        console.log(error)
+      } finally {
+        setUploading(false)
+        setFiles([])
+      }
+    },
+  })
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -35,7 +78,6 @@ const Dropzone = () => {
 
       const allFiles = [...files, ...newFiles]
 
-      console.log(allFiles)
       setFiles(allFiles)
     },
     maxFiles: 10,
@@ -69,14 +111,25 @@ const Dropzone = () => {
             <ShowImage
               key={file.id}
               id={file.id}
-              preview={file.preview}
+              url={file.preview}
               name={file.name}
               handleDelete={handleDelete}
+              cloud={false}
             />
           ))}
       </div>
       {files && files.length > 0 && (
-        <Button variant="outline" className="rounded hover:bg-slate-800 transition duration-100">
+        <Button
+          variant="outline"
+          className="rounded hover:bg-slate-800 transition duration-100"
+          onClick={() => {
+            uploadUrls.mutate({
+              images: files.map((file) => ({
+                id: file.id,
+              })),
+            })
+          }}
+        >
           {uploading ? 'Processando...' : 'Processar e salvar imagens'}
         </Button>
       )}

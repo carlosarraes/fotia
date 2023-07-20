@@ -7,8 +7,6 @@ import Login from './login'
 const Header = () => {
   const { status } = useSession()
 
-  console.log(status)
-
   return (
     <header className="flex w-full justify-between bg-transparent px-10 py-4 border-b border-x border-slate-800">
       <div className="flex items-center justify-center gap-2 text-xl">
