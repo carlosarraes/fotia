@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react'
 import Login from './login'
 import Checkout from './checkout'
 import { api } from '@/utils/api'
-import { Button } from './ui/button'
 import { ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/router'
 
@@ -64,13 +63,13 @@ const Main = () => {
       </div>
       <section className="flex border p-2 w-4/5 mx-auto mt-6 hover:bg-sky-100 dark:hover:bg-gray-800 duration-200 rounded group self-center">
         {paidUser && (
-          <Button
-            className="mx-auto group cursor-pointer"
+          <section
+            className="flex mx-auto group cursor-pointer"
             onClick={() => void router.push('/dashboard')}
           >
             Dashboard
             <ChevronRight className="ml-2 group-hover:translate-x-1 transition" />
-          </Button>
+          </section>
         )}
         {freeUser && <Checkout />}
         {guestUser && <Login />}
