@@ -55,6 +55,8 @@ model User {
     isPaymentSucceeded Boolean   @default(false)
     uniqueKeyword      String?
     modelTrainingLimit Int       @default(0)
+    modelReadyToTrain  Boolean?   @default(false)
+    modelTrained       Boolean?   @default(false)
     trainerVersion     String?
     credits            Int       @default(0)
     modelId            String?
