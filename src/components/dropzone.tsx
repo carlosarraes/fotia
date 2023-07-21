@@ -21,6 +21,8 @@ const Dropzone = () => {
   const [uploading, setUploading] = useState(false)
 
   const ctx = api.useContext()
+  const getAllImgs = api.aws.getAllImgs.useQuery()
+  const processImgs = api.image.processImage.useMutation()
   const uploadUrls = api.aws.uploadImgs.useMutation({
     onError: (error) => {
       console.log(error)
@@ -48,6 +50,7 @@ const Dropzone = () => {
 
         await Promise.all(promises)
         void ctx.aws.getAllImgs.invalidate()
+        void processImgs.mutate()
       } catch (error) {
         if (error instanceof Error) {
           console.log(error.message)
@@ -76,7 +79,9 @@ const Dropzone = () => {
         }),
       )
 
+      const s3ImgsLength = getAllImgs.data?.length ?? 0
       const allFiles = [...files, ...newFiles]
+      allFiles.splice(10 - s3ImgsLength)
 
       setFiles(allFiles)
     },
@@ -95,15 +100,6 @@ const Dropzone = () => {
 
   return (
     <section className="mx-auto flex h-full w-full flex-col space-y-4 p-12">
-      <div
-        {...getRootProps()}
-        className="flex cursor-pointer items-center justify-center rounded-xl border border-dashed border-black bg-slate-100 p-10 hover:bg-slate-300/90 shadow dark:shadow-gray-100"
-      >
-        <input {...getInputProps()} className="h-full w-full" />
-        <p className="text-slate-900">
-          Arraste 7 a 10 imagens para aqui, ou clique para selecionar os arquivos
-        </p>
-      </div>
       <div className="flex flex-wrap items-center justify-center">
         {files &&
           files.length > 0 &&
@@ -117,6 +113,15 @@ const Dropzone = () => {
               cloud={false}
             />
           ))}
+      </div>
+      <div
+        {...getRootProps()}
+        className="flex cursor-pointer items-center justify-center rounded-xl border border-dashed border-black bg-slate-100 p-10 hover:bg-slate-300/90 shadow dark:shadow-gray-100"
+      >
+        <input {...getInputProps()} className="h-full w-full" />
+        <p className="text-slate-900">
+          Arraste 7 a 10 imagens para aqui, ou clique para selecionar os arquivos
+        </p>
       </div>
       {files && files.length > 0 && (
         <Button
