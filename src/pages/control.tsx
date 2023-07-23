@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { api } from '@/utils/api'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import Select from 'react-select'
@@ -14,9 +15,10 @@ type promptKey = {
 const Control = () => {
   const [prompt, setPrompt] = useState('')
   const [selectedPrompt, setSelectedPrompt] = useState('')
+  const [disabled, setDisabled] = useState(false)
   const [prompts] = useState<promptKey>({
     escritorio:
-      'Detailed portrait of KEYPERSON, sharp focus, symmetrical eyes, colored image. A professional photo that captures the seriousness and commitment of the office environment. Dramatic lighting that adds power and prominence to the image.',
+      'Professional headshot of KEYPERSON. Picture should focus on a crisp and clear face with symmetrical eyes, fully visible and without distractions. The lighting should be dramatic yet flattering, highlighting the confidence and professionalism typically seen in LinkedIn profile pictures. The image should be in high resolution and color.',
     gravida:
       'Emotional and detailed portrait of KEYPERSON, capturing the beauty and joy of motherhood. Fully visible face, symmetrical eyes, vibrant and colored image. A powerful and dramatic light enhances the image, giving it a sharp and smooth focus.',
     fantasia:
@@ -39,8 +41,13 @@ const Control = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setDisabled(true)
     void trainModel.mutate({ prompt: selectedPrompt || prompt })
   }
+
+  const router = useRouter()
+
+  if (modelTrained.data?.modelDoneTraining) void router.push('/dashboard')
 
   return (
     <Layout>
@@ -106,13 +113,22 @@ const Control = () => {
           <Textarea placeholder="Nenhum prompt selecionado" value={selectedPrompt} disabled />
         </section>
         <hr className="w-full border-slate-800" />
-        <Button
-          type="submit"
-          className="w-full max-w-xl border rounded hover:bg-gray-800 transition duration-100"
-          disabled={trainModel.isLoading || modelTrained.data}
-        >
-          Treinar modelo e gerar imagens
-        </Button>
+        {!modelTrained.data?.modelTrained ? (
+          <Button
+            type="submit"
+            className="w-full max-w-xl border rounded hover:bg-gray-800 transition duration-100"
+            disabled={trainModel.isLoading || disabled}
+          >
+            Treinar modelo e gerar imagens
+          </Button>
+        ) : (
+          <div className="flex flex-col justify-center items-center mt-8">
+            <span>Modelo esta sendo treinado, agora é so aguardar o e-mail!</span>
+            <span className="text-xs">
+              Pode aguardar nessa pagina tb, atualziaremos quando as fotos estiverem prontas!
+            </span>
+          </div>
+        )}
       </form>
     </Layout>
   )

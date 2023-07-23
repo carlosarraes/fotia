@@ -2,10 +2,17 @@ import Dropzone from '@/components/dropzone'
 import Layout from '@/components/layout'
 import Showzone from '@/components/showzone'
 import { api } from '@/utils/api'
+import { useRouter } from 'next/router'
 
 const Dashboard = () => {
   const getAllImgs = api.aws.getAllImgs.useQuery()
   const readyToTrain = api.user.getReadyToTrain.useQuery()
+  const modelTrained = api.user.getModelTrained.useQuery()
+  const router = useRouter()
+
+  if (modelTrained.data?.modelDoneTraining) {
+    void router.push('/options')
+  }
 
   return (
     <Layout>
