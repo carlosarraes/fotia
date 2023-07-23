@@ -20,6 +20,9 @@ export const env = createEnv({
     AWS_ACCESS_KEY: z.string(),
     AWS_SECRET_KEY: z.string(),
     AWS_BUCKET_NAME: z.string(),
+    WEBHOOK: z.string(),
+    RUNPOD_KEY: z.string(),
+    RESEND: z.string(),
   },
 
   client: {
@@ -40,6 +43,9 @@ export const env = createEnv({
     AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
     AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
     AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+    WEBHOOK: process.env.WEBHOOK,
+    RUNPOD_KEY: process.env.RUNPOD_KEY,
+    RESEND: process.env.RESEND,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 })

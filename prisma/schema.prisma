@@ -57,6 +57,7 @@ model User {
     modelTrainingLimit Int       @default(0)
     modelReadyToTrain  Boolean?   @default(false)
     modelTrained       Boolean?   @default(false)
+    modelDoneTraining  Boolean?   @default(false)
     trainerVersion     String?
     credits            Int       @default(0)
     modelId            String?

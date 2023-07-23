@@ -2,12 +2,16 @@ import { api } from '@/utils/api'
 import ShowImage from './show-image'
 import { Button } from './ui/button'
 import Locker from './locker'
+import { ChevronRight } from 'lucide-react'
+import { useRouter } from 'next/router'
 
 type ShowzoneProps = {
   ready?: boolean
 }
 
 const Showzone = ({ ready }: ShowzoneProps) => {
+  const router = useRouter()
+
   const getAllImgs = api.aws.getAllImgs.useQuery()
 
   return (
@@ -23,8 +27,16 @@ const Showzone = ({ ready }: ShowzoneProps) => {
           ))}
         </div>
       )}
-      <Button variant="outline" className="w-full mt-4 hover:bg-gray-800" disabled={!ready}>
-        Treinar modelo!
+      <Button
+        variant="outline"
+        className="w-full mt-4 hover:bg-gray-600 group"
+        disabled={!ready}
+        onClick={() => {
+          void router.push('/control')
+        }}
+      >
+        Escolher prompt e treinar modelo
+        <ChevronRight className="ml-2 group-hover:translate-x-1 transition" />
       </Button>
     </section>
   )
