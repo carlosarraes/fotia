@@ -4,8 +4,12 @@ import { env } from '@/env.mjs'
 import { TRPCError } from '@trpc/server'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
-export const getAllUserImgs = async (userId: string) => {
-  const path = `fotia/${userId}/`
+export const getAllUserImgs = async (userId: string, done?: boolean) => {
+  let path = `fotia/${userId}/`
+
+  if (done) {
+    path += 'done/'
+  }
 
   const { Contents } = await s3.send(
     new ListObjectsV2Command({

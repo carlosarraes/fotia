@@ -61,7 +61,7 @@ export const userRouter = createTRPCRouter({
       },
     })
   }),
-  getReadyToTrain: protectedProcedure.mutation(async ({ ctx: { prisma, session } }) => {
+  getReadyToTrain: protectedProcedure.query(async ({ ctx: { prisma, session } }) => {
     const user = await prisma.user.findUnique({
       where: {
         id: session.user.id,
@@ -129,7 +129,7 @@ export const userRouter = createTRPCRouter({
                 data_url: zipData,
                 unet_epochs: 120,
                 text_steps: 1200,
-                unet_resolution: 512,
+                unet_resolution: 1024,
                 text_learning_rate: 5e-6,
                 unet_learning_rate: 5e-6,
                 text_lr_scheduler: 'polynomial',
@@ -141,7 +141,7 @@ export const userRouter = createTRPCRouter({
                   negative_prompt:
                     'blurry, side looking, duplication, lowres, cropped, worst quality, low quality, jpeg artifacts, out of frame, watermark, signature',
                   sampler_name: 'LMS',
-                  batch_size: 15,
+                  batch_size: 30,
                   steps: 100,
                   cfg_scale: 7,
                 },
@@ -151,7 +151,7 @@ export const userRouter = createTRPCRouter({
               bucketName: env.AWS_BUCKET_NAME,
               accessId: env.AWS_ACCESS_KEY,
               accessSecret: env.AWS_SECRET_KEY,
-              endpointUrl: `https://s3.sa-east-1.amazonaws.com/fotia/${session.user.id}/model/`,
+              endpointUrl: `https://s3.sa-east-1.amazonaws.com/arrais`,
             },
             webhook: `${env.WEBHOOK}?userId=${session.user.id}`,
           },
@@ -192,6 +192,9 @@ export const userRouter = createTRPCRouter({
 
     if (!user) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' })
 
-    return user.modelTrained as boolean
+    return {
+      modelTrained: user.modelTrained as boolean,
+      modelDoneTraining: user.modelDoneTraining as boolean,
+    }
   }),
 })

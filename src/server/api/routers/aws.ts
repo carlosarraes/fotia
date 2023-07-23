@@ -42,8 +42,20 @@ export const awsRouter = createTRPCRouter({
 
       return signedUrls
     }),
-  getAllImgs: protectedProcedure.query(async ({ ctx: { session } }) => {
-    return await getAllUserImgs(session.user.id)
+  getAllImgs: protectedProcedure.query(async ({ ctx: { session, prisma } }) => {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        modelDoneTraining: true,
+      },
+    })
+
+    if (!user) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' })
+    const modelDoneTraining = (user?.modelDoneTraining as boolean | undefined) || false
+
+    return await getAllUserImgs(session.user.id, modelDoneTraining)
   }),
   deleteImg: protectedProcedure
     .input(
