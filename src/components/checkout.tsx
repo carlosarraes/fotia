@@ -2,6 +2,7 @@ import { api } from '@/utils/api'
 import { Button } from './ui/button'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -64,6 +65,11 @@ const Checkout = () => {
         </section>
         <hr />
         <DialogFooter className="mx-auto">txt2image em breve!</DialogFooter>
+        <DialogClose>
+          <Button variant="outline" className="w-full mt-4 hover:bg-gray-700">
+            Fechar
+          </Button>
+        </DialogClose>
       </DialogContent>
     </Dialog>
   )
